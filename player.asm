@@ -1,14 +1,34 @@
-SECTION "Player", ROM0
-playerTilesAdress:: DS 2
+SECTION "PlayerCode", ROM0
+
+
 
 initPlayer::
+    ld de, playerTiles
+    ld a, [playerTilesAddress]
+    ld h, a
+    ld a, [playerTilesAddress+1]
+    ld l, a
+	ld bc, playerTilesEnd - playerTiles
+.copy:
+	ld a, [de]
+	ld [hli], a
+	inc de
+	dec bc
+	ld a, b
+	or a, c
+	jp nz, .copy
+    ret
+
 
 updatePlayer::
 
-SECTION "PlayreVariables", ROM0
+SECTION "PlayerVariables", WRAM0
+
 playerX:: DS 1
 playerY:: DS 1
-playerStatus:: DS ;goingRight, goingLeft, idle, jumping
+playerStatus:: DS 1;goingRight, goingLeft, idle, jumping
+playerTilesAddress:: DS 2
+playerSpriteAddress:: DS 2
 
 SECTION "PlayerData", ROM0
 playerTiles::

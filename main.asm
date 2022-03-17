@@ -1,14 +1,26 @@
 INCLUDE "hardware.inc"
-
+ 
 SECTION "Header", ROM0[$100]
 
 	jp loadData ;
 	ds $150 - @, 0 ;Space for Header
 
+
+TilesAddress: db $80, $00
+SpriteAddress: db $C1, $00
+
 loadData: ;load DMARoutine, Tiles, etc.
 	call CopyDMARoutine 
 	call WaitVBlank
-	call CopyTiles
+	ld a, 0
+	ld [rLCDC], a
+	ld a, [TilesAddress]
+	ld hl, playerTilesAddress
+	ld [hl], a 
+	ld a, [TilesAddress+1]
+	ld hl, playerTilesAddress+1
+	ld [hl],  a
+	call initPlayer
 	;This is for the OAM test
 	ld hl, $C100
 	ld [hl], 50
@@ -30,6 +42,14 @@ loadData: ;load DMARoutine, Tiles, etc.
 	inc c
 	dec d
 	jp nz, deleteRest
+	ld a, %11100100
+	ld [rBGP], a
+	ld [rOBP0], a
+	
+
+	; Turn the LCD on
+	ld a, LCDCF_ON | LCDCF_OBJON;| LCDCF_BGON 
+	ld [rLCDC], a
 	jp gameLoop
 
 CopyTiles:
