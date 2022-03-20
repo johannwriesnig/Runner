@@ -27,38 +27,8 @@ gameLoop:
     jp gameLoop
 
 checkInput:
-    ld hl, $FF00
-	bit 0, [hl]
-
-	jp nz, noRightInput
-	ld a, [playerX]
-    inc a
-	call setPlayerX
-	noRightInput:
-
-	bit 1, [hl]
-
-	jp nz, noLeftInput
-	ld a, [playerX]
-	dec a
-    call setPlayerX
-	noLeftInput:
-
-	bit 2, [hl]
-
-	jp nz, noUpInput
-	ld a, [playerY]
-	dec a
-    call setPlayerY
-	noUpInput:
-
-	bit 3, [hl]
-
-	jp nz, noDownInput
-	ld a, [playerY]
-	inc a
-    call setPlayerY
-	noDownInput:
+;missing collision check
+   
     ret
 
 setupPlayer:
@@ -76,7 +46,7 @@ setupPlayer:
     ld e, a
     call setPlayersSpriteAddress ;address must be supplied by de
     ld a, [spriteNumber]
-    ld hl, playerSpriteCount
+    ld hl, playerNeededTileCount
     add a, [hl]
     ld [spriteNumber], a
     ld a, 0
@@ -112,6 +82,7 @@ clearRemainingSpriteSpace:
     
 SECTION "GAME_VARIABLES", WRAM0
     spriteNumber:: DS 1 ;40 max
+    
 
 
 

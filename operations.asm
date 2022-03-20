@@ -2,12 +2,12 @@ INCLUDE "hardware.inc"
 SECTION "Operations", ROM0
 
 turnLCDOFF::
-	ld a, LCDCF_ON | LCDCF_OBJON;| LCDCF_BGON 
+	ld a, 0
 	ld [rLCDC], a
     ret
 
 turnLCDON::	
-	ld a, LCDCF_ON | LCDCF_OBJON;| LCDCF_BGON 
+	ld a, LCDCF_ON | LCDCF_OBJON | LCDCF_BGON 
 	ld [rLCDC], a
     ret
 
