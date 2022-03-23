@@ -7,7 +7,7 @@ turnLCDOFF::
     ret
 
 turnLCDON::	
-	ld a, LCDCF_ON | LCDCF_OBJON | LCDCF_BGON 
+	ld a, LCDCF_ON |  LCDCF_BG8000 | LCDCF_BG9800 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_BGON 
 	ld [rLCDC], a
     ret
 

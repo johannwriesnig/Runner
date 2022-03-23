@@ -1,8 +1,11 @@
 main: main.gb
 	rgbfix -v -p 0xFF main.gb
 
-main.gb: main.o player.o game.o
-	rgblink -o  main.gb operations.o main.o player.o game.o 
+main.gb: main.o player.o game.o operations.o map.o 
+	rgblink -o  main.gb operations.o main.o player.o map.o game.o 
+	
+map.o: map.asm
+	rgbasm -L -o map.o map.asm
 
 operations.o: operations.asm
 	rgbasm -L -o operations.o operations.asm
@@ -15,7 +18,6 @@ player.o: player.asm
 
 game.o: game.asm
 	rgbasm -L -o game.o game.asm
-
 
 clean:
 	rm *.o

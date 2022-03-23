@@ -1,13 +1,21 @@
 SECTION "Game_Code", ROM0
-tileAddress: db $80, $00
-spriteAddress: db $C1, $00
 
 initGame:: ;loading all stuff
     ld a, 0
     ld [spriteNumber], a
+    ld a, $80
+    ld [startOfFreeTileSpace], a
+    ld a, $00
+    ld [startOfFreeTileSpace+1], a
+    ld a, $C1
+    ld [startOfFreeSpriteSpace], a
+    ld a, $00
+    ld [startOfFreeSpriteSpace+1], a
+
     call WaitVBlank
     call turnLCDOFF
     call setupPlayer
+    call setupMap
     call setPalettes
     call clearRemainingSpriteSpace
     call turnLCDON
@@ -22,7 +30,7 @@ gameLoop:
     call delayAll ;need to find other solution
     call checkInput
     call updatePlayer
-    ld a, [spriteAddress]
+    ld a, [startOfFreeSpriteSpace]
     call startDMA
     jp gameLoop
 
@@ -31,18 +39,42 @@ checkInput:
    
     ret
 
+setupMap:
+    ld a, [startOfFreeTileSpace]
+    ld [mapTileStartAddress], a
+    ld a, [startOfFreeTileSpace+1]
+    ld [mapTileStartAddress+1], a
+    ld a , 8
+    ld [mapTileStartIndex], a
+    call copyMapTiles
+    call loadMap
+    ret
+
 setupPlayer:
     ld a, 50
     call setPlayerX
+    ld a, 130
     call setPlayerY
-    ld a, [tileAddress]
+    ld a, [startOfFreeTileSpace]
     ld d, a
-    ld a, [tileAddress+1]
+    ld h, a
+    ld a, [startOfFreeTileSpace+1]
     ld e, a
+    ld l, a
+
+    ld bc, playerTilesEnd - playerTiles
+
+    add hl, bc
+
+    ld a, h
+    ld [startOfFreeTileSpace], a
+    ld a, l
+    ld [startOfFreeTileSpace+1], a
+    
     call setPlayersTileAddress   ;address must be supplied by de
-    ld a, [spriteAddress]
+    ld a, [startOfFreeSpriteSpace]
     ld d, a
-    ld a, [spriteAddress+1]
+    ld a, [startOfFreeSpriteSpace+1]
     ld e, a
     call setPlayersSpriteAddress ;address must be supplied by de
     ld a, [spriteNumber]
@@ -64,9 +96,9 @@ clearRemainingSpriteSpace:
     sla b
     sla b
     ld c, a
-    ld a, [spriteAddress]
+    ld a, [startOfFreeSpriteSpace]
     ld h, a
-    ld a, [spriteAddress+1]
+    ld a, [startOfFreeSpriteSpace+1]
     ld l, a
     ld a, c
     add a, l
@@ -81,6 +113,8 @@ clearRemainingSpriteSpace:
     ret
     
 SECTION "GAME_VARIABLES", WRAM0
+    startOfFreeTileSpace: DS 2
+    startOfFreeSpriteSpace: DS 2
     spriteNumber:: DS 1 ;40 max
     
 
