@@ -2,15 +2,17 @@ SECTION "Game_Code", ROM0
 
 initGame:: ;loading all stuff
     ld a, 0
-    ld [spriteNumber], a
+    ld [sprite_count], a
+    ld [scroll_count], a
     ld a, $80
-    ld [startOfFreeTileSpace], a
+    ld [_FREE_TILE_MEMORY], a
     ld a, $00
-    ld [startOfFreeTileSpace+1], a
+    ld [_FREE_TILE_MEMORY+1], a
     ld a, $C1
-    ld [startOfFreeSpriteSpace], a
+    ld [_FREE_SPRITE_SPACE], a
     ld a, $00
-    ld [startOfFreeSpriteSpace+1], a
+    ld [_FREE_SPRITE_SPACE+1], a
+
 
     call WaitVBlank
     call turnLCDOFF
@@ -26,39 +28,40 @@ startGame::
     ret
 
 gameLoop:
-    call WaitVBlank
     call delayAll ;need to find other solution
+    call WaitVBlank
     call checkInput
     call updatePlayer
-    ld a, [startOfFreeSpriteSpace]
+    call updateMap
+    ld a, [_FREE_SPRITE_SPACE]
     call startDMA
     jp gameLoop
 
 checkInput:
 ;missing collision check
-   
+    ld a, [$FF00]
+    cpl
+    and a, %00000111
+    ld [playerMovement], a
     ret
 
 setupMap:
-    ld a, [startOfFreeTileSpace]
-    ld [mapTileStartAddress], a
-    ld a, [startOfFreeTileSpace+1]
-    ld [mapTileStartAddress+1], a
-    ld a , 8
-    ld [mapTileStartIndex], a
-    call copyMapTiles
-    call loadMap
+    call loadBackgroundTiles
+    call loadTileMap
     ret
 
 setupPlayer:
     ld a, 50
-    call setPlayerX
-    ld a, 130
-    call setPlayerY
-    ld a, [startOfFreeTileSpace]
+    ld [playerX], a
+    ld a, 128
+    ld [playerY], a
+
+    ld a, [_FREE_TILE_MEMORY]
+    ld [playerTileAddress], a
     ld d, a
     ld h, a
-    ld a, [startOfFreeTileSpace+1]
+    ld a, [_FREE_TILE_MEMORY+1]
+    ld [playerTileAddress+1], a
     ld e, a
     ld l, a
 
@@ -67,27 +70,26 @@ setupPlayer:
     add hl, bc
 
     ld a, h
-    ld [startOfFreeTileSpace], a
+    ld [_FREE_TILE_MEMORY], a
     ld a, l
-    ld [startOfFreeTileSpace+1], a
-    
-    call setPlayersTileAddress   ;address must be supplied by de
-    ld a, [startOfFreeSpriteSpace]
-    ld d, a
-    ld a, [startOfFreeSpriteSpace+1]
-    ld e, a
-    call setPlayersSpriteAddress ;address must be supplied by de
-    ld a, [spriteNumber]
-    ld hl, playerNeededTileCount
-    add a, [hl]
-    ld [spriteNumber], a
-    ld a, 0
+    ld [_FREE_TILE_MEMORY+1], a
+
+    ld a, [_FREE_SPRITE_SPACE]
+    ld [playerSpriteAddress], a
+    ld a, [_FREE_SPRITE_SPACE+1]
+    ld [playerSpriteAddress+1], a
+
+    ld a, [sprite_count]
     ld [playerSpriteStartId], a
-    call copyPlayerTiles
+    add a, 4
+    ld [sprite_count], a
+
+    call loadPlayerTiles
+
     ret
 
 clearRemainingSpriteSpace:
-    ld a, [spriteNumber]
+    ld a, [sprite_count]
     ld b, 40 
     ;4 -> 16(if 4 sprites we got 16 Bytes)
     sla a
@@ -96,9 +98,9 @@ clearRemainingSpriteSpace:
     sla b
     sla b
     ld c, a
-    ld a, [startOfFreeSpriteSpace]
+    ld a, [_FREE_SPRITE_SPACE]
     ld h, a
-    ld a, [startOfFreeSpriteSpace+1]
+    ld a, [_FREE_SPRITE_SPACE+1]
     ld l, a
     ld a, c
     add a, l
@@ -113,9 +115,10 @@ clearRemainingSpriteSpace:
     ret
     
 SECTION "GAME_VARIABLES", WRAM0
-    startOfFreeTileSpace: DS 2
-    startOfFreeSpriteSpace: DS 2
-    spriteNumber:: DS 1 ;40 max
+    _FREE_TILE_MEMORY: DS 2
+    _FREE_SPRITE_SPACE: DS 2
+    sprite_count:: DS 1 ;40 max
+    
     
 
 

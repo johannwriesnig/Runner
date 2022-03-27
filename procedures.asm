@@ -1,18 +1,18 @@
-INCLUDE "hardware.inc"
-SECTION "Operations", ROM0
+INCLUDE "constants.inc"
+SECTION "Procedures", ROM0
 
 turnLCDOFF::
 	ld a, 0
 	ld [rLCDC], a
-    ret
+  ret
 
 turnLCDON::	
 	ld a, LCDCF_ON |  LCDCF_BG8000 | LCDCF_BG9800 | LCDCF_OBJ8 | LCDCF_OBJON | LCDCF_BGON 
 	ld [rLCDC], a
-    ret
+  ret
 
 delayAll:: ;naively delaying cpu
-    ld a,160
+  ld a,160
 	loop:
 	dec a
 	jp nz, loop
@@ -21,7 +21,7 @@ setPalettes::
 	ld a, %11100100
 	ld [rBGP], a
 	ld [rOBP0], a
-    ret
+  ret
 
 WaitVBlank::
 	ld a, [rLY]
