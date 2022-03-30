@@ -1,0 +1,2 @@
+Animationen fortsetzen. Eher auf anim links anim rechts aufteilen und durch states unterscheiden wielange man rennt.
+Die waits auslagern. Vllt mit states, wodurch anim rechts, links ects dadurch aufgerufen wird, und die frames einfach geskipt werden.  

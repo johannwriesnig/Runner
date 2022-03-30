@@ -1,6 +1,41 @@
 INCLUDE "constants.inc"
 SECTION "Procedures", ROM0
 
+memcpy::
+  ;DE = block_Size
+  ;BC = source_Address
+  ;HL = destination_Address
+
+.memcpy_loop:
+    ld A, [BC]
+    ld [HLI], A
+    inc BC
+    dec DE
+.memcpy_check_limit:
+    ld A, E
+    cp $00
+    jr nz, .memcpy_loop
+    ld A, D
+    cp $00
+    jr nz, .memcpy_loop
+    ret
+
+memclear::
+    ;DE = block_Size
+    ;HL = destination_Address
+.memclear_loop:
+    ld A, 0
+    ld [HLI], A
+    dec DE
+.memclear_check_limit:
+    ld A, E
+    cp $00
+    jr nz, .memclear_loop
+    ld A, D
+    cp $00
+    jr nz, .memclear_loop
+    ret
+
 turnLCDOFF::
 	ld a, 0
 	ld [rLCDC], a
@@ -12,10 +47,21 @@ turnLCDON::
   ret
 
 delayAll:: ;naively delaying cpu
-  ld a,160
-	loop:
-	dec a
-	jp nz, loop
+  ld b, 17
+  outerLoop:
+ 
+    dec b
+    ld a, b
+    cp a, 0
+    jp z, outerLoopEnd
+  
+    ld a,255
+	  loop:
+	    dec a
+	    jp nz, loop
+      jp outerLoop
+  outerLoopEnd:
+  ret
 
 setPalettes::
 	ld a, %11100100

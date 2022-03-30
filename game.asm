@@ -1,5 +1,10 @@
 SECTION "Game_Code", ROM0
 
+gameHandler::
+	call initGame
+	call startGame
+    ret
+
 initGame:: ;loading all stuff
     ld a, 0
     ld [sprite_count], a
