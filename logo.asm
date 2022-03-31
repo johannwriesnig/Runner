@@ -57,6 +57,8 @@ initAnimation:
     ld [Player_X], a
     ld a, _LOGO_PLAYER_STARTING_Y
     ld [Player_Y], a
+    ld a, _LOGO_PLAYER_TURN_LEFT_X
+    ld [Player_Stop_X], a
     ld a, 0
     ld [Player_Animation_Count], a
     ld [Player_Frame_Time], a
@@ -65,23 +67,40 @@ initAnimation:
 
 animateTillStart:
     .loop:
-        call drawRunAnim
-        call drawTurnAnim
+        ld a, _LOGO_PLAYER_TURN_LEFT_X
+        ld [Player_Stop_X], a
+        call drawRunRightAnim
+        call stopAnimFor1Sek
+        ld a, _LOGO_PLAYER_TURN_RIGHT_X
+        ld [Player_Stop_X], a
+        call drawRunLeftAnim
+        call stopAnimFor1Sek
+        ld a, _LOGO_PLAYER_JUMP_X
+        ld [Player_Stop_X], a
+        call drawRunRightAnim
         call drawJumpAnim
     jp .loop
+    endAnimation:
     ret
 
-drawTurnAnim:
-    call drawLeftTurn
-    call drawRightTurn
+checkPressA:
+    ld a, [$FF00]
+    and a, %00000001
+    jp nz, .notPressed
+        inc sp
+        inc sp
+        inc sp
+        inc sp
+        jp endAnimation
+    .notPressed:
     ret
 
-drawLeftTurn:
+drawRunLeftAnim:
     ld a, 0
-    call stopAnimFor1Sek
     .loop:
     call delayAll
     call WaitVBlank
+    call checkPressA
     ld a, [Player_Animation_Count]
     ld b, 0
     .multLoop:
@@ -95,6 +114,10 @@ drawLeftTurn:
         dec a
         jp .multLoop
     .multLoopEnd:
+
+    ld a, [Player_X]
+    dec a
+    ld [Player_X], a
 
     ld hl, _Sprites_Address
     ;upper right sprite
@@ -149,10 +172,6 @@ drawLeftTurn:
     ld a, HIGH(_Sprites_Address)
     call startDMA
 
-    ld a, [Player_X]
-    dec a
-    ld [Player_X], a
-
     ld a, [Player_Frame_Time]
     inc a
     ld [Player_Frame_Time], a
@@ -170,8 +189,11 @@ drawLeftTurn:
 
     .keepAnimation:
 
+
     ld a, [Player_X]
-    cp a, _LOGO_PLAYER_TURN_RIGHT_X
+    ld b, a
+    ld a, [Player_Stop_X]
+    cp a, b
     jp nz, .loop
     ret
 
@@ -192,10 +214,12 @@ stopAnimFor1Sek:
 drawRightTurn:
     ret
 
-drawRunAnim:
+drawRunRightAnim:
+  
     .loop:
     call delayAll
     call WaitVBlank
+    call checkPressA
     ld a, [Player_Animation_Count]
     ld b, 0
     .multLoop:
@@ -209,6 +233,96 @@ drawRunAnim:
         dec a
         jp .multLoop
     .multLoopEnd:
+
+    ld a, [Player_X]
+    inc a
+    ld [Player_X], a
+
+    ld hl, _Sprites_Address
+    ;upper left sprite
+    ld a, [Player_Y]
+	ld [hli], a
+	ld a, [Player_X]
+	ld [hli], a
+	ld a, b
+	ld [hli], a
+	inc b
+	ld a, 0 
+	ld [hli], a	
+
+	;lower left sprite
+	ld a, [Player_Y]
+	add a, 8
+	ld [hli], a
+	ld a, [Player_X]
+	ld [hli], a
+	ld a,b
+	ld [hli], a
+	ld a, 0 
+	ld [hli], a
+	inc b
+
+	;upper right sprite
+	ld a, [Player_Y]
+	ld [hli], a
+	ld a, [Player_X]
+	add a,8
+	ld [hli], a
+	ld a,b
+	ld [hli], a
+	inc b
+	ld a, 0 
+	ld [hli], a
+
+	;lower right sprite
+	ld a, [Player_Y]
+	add a,8
+	ld [hli], a
+	ld a, [Player_X]
+	add a, 8
+	ld [hli], a
+	ld a,b
+	ld [hli], a
+	ld a, 0 
+	ld [hli], a
+
+    ld a, HIGH(_Sprites_Address)
+    call startDMA
+
+    ld a, [Player_Frame_Time]
+    inc a
+    ld [Player_Frame_Time], a
+    cp a, 5; frametime per animation
+    jp nz, .keepAnimation
+    ld a, 0
+    ld [Player_Frame_Time], a
+    ld a, [Player_Animation_Count]
+    inc a 
+    cp a, 3
+    jp nz, .inRange
+        ld a, 0
+    .inRange:
+    ld [Player_Animation_Count], a
+
+    .keepAnimation:
+
+    ld a, [Player_X]
+    ld b, a
+    ld a, [Player_Stop_X]
+    cp a, b
+    jp nz, .loop
+    ret
+
+
+drawJumpAnim:
+    ld a, 1
+    ld [Player_Should_Jump], a
+    .loop:
+    call delayAll
+    call WaitVBlank
+    call checkPressA
+    ld b, 12
+    ld hl, _Sprites_Address
 
     ld hl, _Sprites_Address
     ;upper left sprite
@@ -265,33 +379,31 @@ drawRunAnim:
     inc a
     ld [Player_X], a
 
-    ld a, [Player_Frame_Time]
+    ld a, [Player_Y]
+    ld b, a
+    ld a, _LOGO_PLAYER_JUMP_MAX
+    cp a, b
+
+    jp nz, .skipInitFall
+    ld a,0
+    ld [Player_Should_Jump], a
+    .skipInitFall:
+
+    ld a, [Player_Should_Jump]
+    cp a, 1
+    ld a, [Player_Y]
+    jp z, .playerJumps
     inc a
-    ld [Player_Frame_Time], a
-    cp a, 5; frametime per animation
-    jp nz, .keepAnimation
-    ld a, 0
-    ld [Player_Frame_Time], a
-    ld a, [Player_Animation_Count]
-    inc a 
-    cp a, 3
-    jp nz, .inRange
-        ld a, 0
-    .inRange:
-    ld [Player_Animation_Count], a
-
-    .keepAnimation:
-
+    jp .skipDec
+    .playerJumps:
+    dec a
+    .skipDec:
+    ld [Player_Y], a
     ld a, [Player_X]
-    cp a, _LOGO_PLAYER_TURN_LEFT_X
+    ld b,a
+    ld a, _LOGO_PLAYER_JUMP_LANDING_X
+    cp a, b
     jp nz, .loop
-    ret
-
-
-drawJumpAnim:
-    .loop:
-
-    jp .loop
     ret
 
 
@@ -301,6 +413,8 @@ Player_Y: DS 1
 Player_Animation_Count: DS 1
 Player_Frame_Time: DS 1
 Player_Idle_Time: DS 1
+Player_Stop_X: DS 1
+Player_Should_Jump: DS 1
 
 
 SECTION "LogoData", ROM0
