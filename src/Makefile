@@ -1,9 +1,11 @@
-main: main.gb
-	rgbfix -v -p 0xFF main.gb
+Runner: Runner.gb
+	rgbfix -v -p 0xFF Runner.gb
 	make clean
+	mv Runner.gb ../
 
-main.gb: main.o player.o game.o procedures.o map.o logo.o
-	rgblink -o  main.gb procedures.o main.o player.o map.o game.o logo.o
+
+Runner.gb: main.o player.o game.o procedures.o map.o logo.o
+	rgblink -o  Runner.gb procedures.o main.o player.o map.o game.o logo.o
 	
 map.o: map.asm
 	rgbasm -L -o map.o map.asm
