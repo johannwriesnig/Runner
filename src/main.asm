@@ -4,7 +4,7 @@ SECTION "Header", ROM0[$100]
 
 main::
 	call copyDMARoutine
-	call logoHandler
+	;call logoHandler
 	call gameHandler
 
 

@@ -47,7 +47,7 @@ turnLCDON::
   ret
 
 delayAll:: ;naively delaying cpu
-  ld b, 17
+  ld b, 15
   outerLoop:
  
     dec b
@@ -72,7 +72,7 @@ setPalettes::
 WaitVBlank::
 	ld a, [rLY]
 	cp 144
-	jp c, WaitVBlank
+	jp nz, WaitVBlank
 	ret
 
 copyDMARoutine::
