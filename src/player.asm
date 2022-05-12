@@ -165,6 +165,14 @@ checkCollision:
 		ld [COLLISIONS], a
 	.noRightCollision:
 
+	ld a, [POSITION_Y]
+	cp a, 144
+	jp c, .notDead
+		ld a, 1
+		ld [is_Dead], a
+	.notDead:
+
+
 	ret
 
 updatePositions:
@@ -240,6 +248,8 @@ updatePositions:
 	jp .skipSpeedInc
 	.notGoingUp:
 	ld a, [SPEED_Y]
+	cp a, 4
+	jp z, .skipSpeedInc
 	add a, GRAVITY
 	ld [SPEED_Y], a
 	.skipSpeedInc:
@@ -280,8 +290,8 @@ updatePositions:
 	ld a, [SPEED_Y]
 	cp a, 9
 	jp nz, .skipSpeedReset
-	ld a, 0
-	ld [SPEED_Y], a
+	;ld a, 0
+	;ld [SPEED_Y], a
 	.skipSpeedReset:
 	.skipGravity:
 	ret
