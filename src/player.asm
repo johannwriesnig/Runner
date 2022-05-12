@@ -76,6 +76,7 @@ updatePlayer::
 	ret
 
 checkCollision:
+	;checkBottomCollision
 	ld a, [rSCX]
 	ld b, a
 	;add a, MID_SCREEN
@@ -123,20 +124,75 @@ checkCollision:
 	ld [COLLISIONS], a
 	.end:
 
+	;check left-collision
+	ld a, [POSITION_X]
+	cp a, 9
+	jp nc, .notReachedLeftEnd
+	ld b, COLLISION_LEFT
+	ld a, [COLLISIONS]
+	or a, b
+	ld [COLLISIONS], a
+	.notReachedLeftEnd
+
+	;check rightCollision
+	
+	ld a, [rSCX]
+	ld b, a
+	ld a, [POSITION_X]
+	add a, b
+	srl a
+	srl a
+	srl a
+	add a, 1
+	cp a, $20
+	jp nz, .skipSetting0
+	ld a, 0
+	.skipSetting0:
+	ld b, a
+
+	ld a, [POSITION_Y]
+	srl a
+	srl a
+	srl a
+	sub a, 1
+	call getTileId
+	call isSolid
+
+	cp a, 1
+	jp nz, .noRightCollision
+		ld a, [COLLISIONS]
+		or a, COLLISION_RIGHT
+		ld [COLLISIONS], a
+	.noRightCollision:
+
 	ret
 
 updatePositions:
+
+	ld a, [COLLISIONS]
+	and a, COLLISION_RIGHT
+	jp z, .noRightCollision
+		ld a, [POSITION_X]
+		sub a, SCROLL_PER_UPDATE 
+		ld [POSITION_X], a
+		jp .notGoingRight
+	.noRightCollision
+
 	ld a, [JOYPAD_INPUT]
 	and a, INPUT_RIGHT
 	jp z, .notGoingRight
-		ld a, [COLLISIONS]
-		and a, COLLISION_RIGHT
-		jp nz, .notGoingRight
+			ld a, [POSITION_X]
+			cp a, 153
+			jp c, .goRight
+			ld a, 152
+			ld a, [POSITION_X]
+			jp .notGoingRight
+			.goRight:
 			ld a, [POSITION_X]
 			add a, PIXEL_PER_UPDATE 
 			ld [POSITION_X], a
 			jp .notGoingRight
-		.moveBackGround:
+			
 	.notGoingRight:
 
 	ld a, [JOYPAD_INPUT]
@@ -144,10 +200,12 @@ updatePositions:
 	jp z, .notGoingLeft
 		ld a, [COLLISIONS]
 		and a, COLLISION_LEFT
-		jp nz, .notGoingLeft
+		jp z, .goingLeft
+		ld a, 8
+		ld [POSITION_X], a
+		jp .notGoingLeft
+		.goingLeft:
 		ld a, [POSITION_X]
-		cp 4
-		jp z, .notGoingLeft
 		sub a, PIXEL_PER_UPDATE + SCROLL_PER_UPDATE
 		ld [POSITION_X], a
 	.notGoingLeft:
@@ -199,6 +257,7 @@ updatePositions:
 	jp .skipFall
 	.handleFall:
 	ld a, [COLLISIONS]
+	and a, COLLISION_BOTTOM
 	cp a, 1
 	jp z, .collision
 	ld a, [POSITION_Y]
@@ -388,36 +447,36 @@ SECTION "PlayerData", ROM0
 
 playerTiles::
 idle:
-DB $00,$00,$03,$03,$0C,$0F,$08,$0F
-DB $10,$1F,$1F,$1F,$10,$1F,$11,$1A
-DB $0D,$08,$07,$04,$07,$07,$0A,$0F
-DB $0F,$09,$05,$06,$0F,$0F,$0F,$09
-DB $00,$00,$C0,$C0,$30,$F0,$10,$F0
-DB $18,$F8,$E8,$F8,$D0,$30,$F0,$50
-DB $F0,$50,$F0,$10,$E0,$E0,$A0,$E0
-DB $E0,$E0,$A0,$E0,$A0,$E0,$F0,$90
-DB $03,$03,$0C,$0F,$08,$0F,$10,$1F
-DB $1F,$1F,$10,$1F,$11,$1A,$0D,$08
-DB $07,$04,$07,$07,$05,$07,$0F,$0B
-DB $0E,$09,$07,$07,$02,$03,$03,$02
-DB $C0,$C0,$30,$F0,$10,$F0,$18,$F8
-DB $E8,$F8,$D0,$30,$F0,$50,$F0,$50
-DB $F0,$10,$E0,$E0,$40,$C0,$C0,$C0
-DB $C0,$40,$C0,$C0,$40,$C0,$E0,$20
-DB $00,$00,$03,$03,$0C,$0F,$08,$0F
-DB $10,$1F,$1F,$1F,$10,$1F,$11,$1A
-DB $0D,$08,$07,$04,$07,$07,$0E,$0B
-DB $14,$1F,$1D,$17,$0D,$0F,$0F,$09
-DB $00,$00,$C0,$C0,$30,$F0,$10,$F0
-DB $18,$F8,$E8,$F8,$D0,$30,$F0,$50
-DB $F0,$50,$F0,$10,$E0,$E0,$B0,$F0
-DB $F8,$E8,$B0,$F0,$20,$E0,$F0,$90
-DB $07,$07,$18,$1F,$10,$1F,$20,$3F
-DB $3F,$3F,$21,$3E,$23,$34,$1B,$10
-DB $0F,$08,$3B,$3F,$4C,$7F,$DB,$BF
-DB $70,$7F,$43,$3F,$7C,$3C,$40,$40
-DB $80,$80,$60,$E0,$20,$E0,$30,$F0
-DB $D0,$F0,$A0,$60,$E0,$A0,$E8,$A8
-DB $FC,$34,$C8,$F8,$F0,$F0,$88,$88
-DB $F8,$F0,$08,$F0,$F8,$F8,$00,$00
+DB $00,$00,$00,$00,$01,$01,$01,$01
+DB $02,$03,$03,$03,$02,$03,$02,$03
+DB $01,$01,$00,$00,$00,$00,$01,$01
+DB $01,$01,$00,$00,$01,$01,$01,$01
+DB $00,$00,$78,$78,$86,$FE,$02,$FE
+DB $03,$FF,$FD,$FF,$1A,$E6,$3E,$4A
+DB $BE,$0A,$FE,$82,$FC,$FC,$54,$FC
+DB $FC,$3C,$B4,$DC,$F4,$FC,$FE,$32
+DB $00,$00,$01,$01,$01,$01,$02,$03
+DB $03,$03,$02,$03,$02,$03,$01,$01
+DB $00,$00,$00,$00,$00,$00,$01,$01
+DB $01,$01,$00,$00,$00,$00,$00,$00
+DB $78,$78,$86,$FE,$02,$FE,$03,$FF
+DB $FD,$FF,$1A,$E6,$3E,$4A,$BE,$0A
+DB $FE,$82,$FC,$FC,$A8,$F8,$F8,$78
+DB $D8,$28,$F8,$F8,$48,$78,$7C,$44
+DB $00,$00,$00,$00,$01,$01,$01,$01
+DB $02,$03,$03,$03,$02,$03,$02,$03
+DB $01,$01,$00,$00,$00,$00,$01,$01
+DB $02,$03,$03,$02,$01,$01,$01,$01
+DB $00,$00,$78,$78,$86,$FE,$02,$FE
+DB $03,$FF,$FD,$FF,$1A,$E6,$3E,$4A
+DB $BE,$0A,$FE,$82,$FC,$FC,$D6,$7E
+DB $9F,$FD,$B6,$FE,$A4,$FC,$FE,$32
+DB $01,$01,$06,$07,$04,$07,$08,$0F
+DB $0F,$0F,$08,$0F,$08,$0D,$06,$04
+DB $03,$02,$0E,$0F,$13,$1F,$36,$2F
+DB $1C,$1F,$10,$0F,$1F,$0F,$10,$10
+DB $E0,$E0,$18,$F8,$08,$F8,$0C,$FC
+DB $F4,$FC,$68,$98,$F8,$28,$FA,$2A
+DB $FF,$0D,$F2,$FE,$3C,$FC,$E2,$E2
+DB $3E,$FC,$C2,$FC,$3E,$3E,$00,$00
 playerTilesEnd::

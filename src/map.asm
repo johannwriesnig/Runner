@@ -249,7 +249,7 @@ DS $400
 SECTION "MapData", ROM0
 
 Solids:
-DB  $89, $8A, $8B, $81
+DB  $89, $8A, $8B, $81, $8E, $82
 SolidsEnd:
 
 DeathTiles:
