@@ -1,4 +1,4 @@
-; PLAYER.INC
+; ENEMY.INC
 ;
 ; Include File.
 ;
@@ -10,7 +10,7 @@
 ;   Compression          : None.
 ;   Counter              : None.
 ;   Tile size            : 8 x 8
-;   Tiles                : 0 to 18
+;   Tiles                : 0 to 1
 ;
 ;   Palette colors       : None.
 ;   SGB Palette          : None.
@@ -27,4 +27,4 @@ TileLabelBank EQU 0
 ; Start of tile array.
  GLOBAL TileLabel
 
-; End of PLAYER.INC
+; End of ENEMY.INC

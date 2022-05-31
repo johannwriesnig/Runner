@@ -10,6 +10,7 @@ DEF MAX_Y EQU 128
 DEF INPUT_RIGHT EQU %00000001
 DEF INPUT_LEFT EQU %00000010
 DEF INPUT_UP EQU %00000100
+DEF INPUT_SHOOT EQU %00001000
 DEF INPUT_IDLE EQU %00000000
 DEF OAM_ATTRIBUTES_MOVING_LEFT EQU %00100000
 DEF COLLISION_BOTTOM EQU %00000001
@@ -72,6 +73,13 @@ updatePlayer::
 	call drawInAir
 
 	.end:
+
+	ld a, [JOYPAD_INPUT]
+	and a,  INPUT_SHOOT
+	jp z, .noShot
+		;call shoot_Projectile
+	
+	.noShot
 
 	ret
 
@@ -301,7 +309,7 @@ updatePositions:
 checkInput:
 	ld a, [$FF00]
 	ld b, a
-	ld a, %11111000
+	ld a, %11110000
 	or a, b
 	cpl
 	ld [JOYPAD_INPUT], a
