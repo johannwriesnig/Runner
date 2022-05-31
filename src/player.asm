@@ -234,6 +234,7 @@ updatePositions:
 	cp a, 1 
 	jp nz, .isMidAir
 	ld [GOING_UP], a
+	call playJump
 	ld a, 0
 	ld [ON_GROUND], a 
 	ld a, 9

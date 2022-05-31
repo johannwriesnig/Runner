@@ -4,6 +4,7 @@ SECTION "Header", ROM0[$100]
 
 main::
 	call copyDMARoutine
+	call turnSoundON
 	;call logoHandler
 	call gameHandler
 

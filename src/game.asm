@@ -9,11 +9,11 @@ gameHandler::
     call initMap
     call initPlayer
     call initEnemy
-    call initSoundData
     call setupStartVariables
     ;call setupProjectiles
     call setPalettes
     call turnLCDON
+    
 
     jp startNewGame
     ret
@@ -49,7 +49,7 @@ gameLoop:
     jp gameHandler
     .continue:
 
-    ;call playSound
+    call playSound
     call WaitVBlank
     ld a, [DRAW_ME]
     cp a, 1
