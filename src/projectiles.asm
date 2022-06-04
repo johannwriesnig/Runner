@@ -127,8 +127,8 @@ shoot_Projectile::
 SECTION "ProjectilesVariables", WRAM0
 Shot_Projectiles:: DS 1
 Is_Active:: DS 1
-ProjectileX: DS 1
-ProjectileY: DS 1
+ProjectileX:: DS 1
+ProjectileY:: DS 1
 Is_Going_Up:: DS 1
 
 SECTION "ProjectileData", ROM0

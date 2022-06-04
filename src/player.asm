@@ -175,12 +175,47 @@ checkCollision:
 
 	ld a, [POSITION_Y]
 	cp a, 144
-	jp c, .notDead
+	jp c, .notDeadY
 		ld a, 1
 		ld [is_Dead], a
-	.notDead:
+	.notDeadY:
+
+	ld a, [POSITION_X]
+	cp a, 230
+	jp c, .notDeadX
+		ld a, 1
+		ld [is_Dead], a
+	.notDeadX:
+
+	ld a, [enemyX]
+	ld b, a
+	ld a, [POSITION_X]
+	add a, 16
+	cp a, b
+	jp c, .noProjCol
+	ld a, [POSITION_X]
+	ld b, a
+	ld a, [enemyX]
+	add a, 8
+	cp a, b
+	jp c, .noProjCol
+	ld a, [POSITION_Y]
+	ld b, a
+	ld a, [enemyY]
+	add a, 8
+	cp a, b
+	jp c, .noProjCol
+	ld a, [enemyY]
+	ld b, a
+	ld a, [POSITION_Y]
+	add a, 16
+	cp a, b
+	jp c, .noProjCol
+	ld a, 1 
+	ld [is_Dead], a 
 
 
+	.noProjCol:
 	ret
 
 updatePositions:

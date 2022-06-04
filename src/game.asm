@@ -60,13 +60,14 @@ gameLoop:
     call startDMA
 
     ld a, [enemyCounter]
-    inc a
+    add a, 2
     ld[enemyCounter], a
 
-    cp a, 250
+    cp a, 200
     jp nz, .skipSendingEnemy
         call sendEnemy
-        call playSound
+        ld a, 0
+        ld [enemyCounter], a 
     .skipSendingEnemy:
     jp gameLoop ;wenn gameEnd dann zum gameendhandler springen
 

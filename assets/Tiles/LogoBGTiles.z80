@@ -10,7 +10,7 @@
 ;   Compression          : None.
 ;   Counter              : None.
 ;   Tile size            : 8 x 8
-;   Tiles                : 0 to 67
+;   Tiles                : 0 to 68
 ;
 ;   Palette colors       : None.
 ;   SGB Palette          : None.
@@ -160,5 +160,7 @@ DB $FF,$00,$FF,$00,$FF,$00,$FF,$00
 DB $FF,$00,$FF,$00,$FF,$00,$FF,$00
 DB $00,$FF,$00,$FF,$00,$FF,$00,$FF
 DB $00,$FF,$00,$FF,$00,$FF,$00,$FF
+DB $00,$00,$00,$00,$00,$00,$00,$00
+DB $00,$00,$FF,$FF,$00,$FF,$00,$FF
 
 ; End of LOGOBGTILES.Z80

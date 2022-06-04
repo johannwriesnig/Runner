@@ -46,7 +46,7 @@ sendEnemy::
     ld a, 0
     ld [sendable], a
 
-    ld a, 200
+    ld a, 172
     ld [enemyX], a
     ld a, [POSITION_Y]
     sub a, 1
@@ -69,9 +69,9 @@ updateEnemy::
     ld [hli], a
 
 	ld a, [enemyX]
-    sub a, 3
+    sub a, 4
     ld [enemyX], a
-    cp a, 0
+    cp a, 252
     jp nz, .continue
         ld hl, SpritesEnemy
         ld a, 0
