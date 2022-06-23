@@ -1,4 +1,0 @@
-logo refactorn, player tiles transparentes ohr ändern, fade anim für kein starken cut im bilödwechsel
-delayAll sollte denk ich umgeschrieben werden. 
-
-Entweder Sound oder Collision-Detection als nächstes.
