@@ -1,7 +1,7 @@
 [Project not finished]
 # Runner
 
-This is a simple endless-runner made for the gameboy. It is written in assembly and the RGBDS-Toolchain for creating the .gb file. For emulating and debugging the BGB-Emulator was used. 
+This is a simple endless-runner made for the gameboy. It is written in assembly and the RGBDS-Toolchain was used for creating the .gb file.
 
 # How to run
 
