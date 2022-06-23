@@ -9,21 +9,21 @@ Just open the Runner.gb file with your emulator.
 
 # References
 
-Those are some references that helped me understanding the gameboy-architecture and RGBDS:
-https://gbdev.io/pandocs/
-https://gbdev.gg8.se/wiki/articles/OAM_DMA_tutorial
-https://rgbds.gbdev.io/docs/v0.5.2
+Those are some references that helped me understanding the gameboy-architecture and RGBDS: <br>
+https://gbdev.io/pandocs/ <br>
+https://gbdev.gg8.se/wiki/articles/OAM_DMA_tutorial <br>
+https://rgbds.gbdev.io/docs/v0.5.2 
 
-Software that was used)
+# Software 
 
-Emulator for testing and debugging: 
+Emulator for testing and debugging: <br>
 https://bgb.bircd.org/
 
-Toolchain to create .gb-file:
+Toolchain to create .gb-file: <br>
 https://rgbds.gbdev.io/
 
-Tile- and mapdesigner:
-http://www.devrs.com/gb/hmgd/gbtd.html
+Tile- and mapdesigner: <br>
+http://www.devrs.com/gb/hmgd/gbtd.html <br>
 http://www.devrs.com/gb/hmgd/gbmb.html
 
 
