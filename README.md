@@ -1,6 +1,8 @@
 [Project not finished]
 # Runner
 
+![Screenshot](Runner.png)
+
 This is a simple endless-runner made for the gameboy. It is written in assembly and the RGBDS-Toolchain was used for creating the .gb file.
 
 # How to run
