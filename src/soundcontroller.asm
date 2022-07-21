@@ -2,10 +2,7 @@ INCLUDE "constants.inc"
 SECTION "SounCode", ROM0
 
 turnSoundON::
-    ld a, %01110111
-    ld a, [$FF24]
-
-    ld a,%11111111
+    ld a, $FF
     ld [$FF25], a
 
     ;channel 1
@@ -18,26 +15,11 @@ turnSoundON::
     ld a, %11010010
     ld [$FF12], a
 
-    ld a, %10000000
+    ld a, %11111111
     ld [$FF13], a 
 
-    ld a, %00000000
+    ld a, %1111111
     ld [$FF14], a
-
-    ;channel 2
-
-    ld a, %10111111
-    ld [$FF16], a
-
-    ld a, %10010010
-    ld [$FF17], a
-
-    ld a, %11111111
-    ld [$FF18], a
-
-    ld a, %10111100
-    ld [$FF19], a 
-
     ret
 
 initSoundData::
@@ -50,8 +32,8 @@ initSoundData::
     ret
 
 playJump::
-    ld a, %11000001
-    ld [$FF14], a
+    ld a, %00110010
+    ld [$FF12], a
 ret
 playSound::
   
